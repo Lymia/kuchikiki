@@ -102,7 +102,7 @@ impl TreeSink for Sink {
 
     #[inline]
     fn elem_name<'a>(&self, target: &'a NodeRef) -> ExpandedName<'a> {
-        target.as_element().unwrap().name.expanded()
+        target.as_element().unwrap().original_name.as_ref().unwrap().expanded()
     }
 
     #[inline]
