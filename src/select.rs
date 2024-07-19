@@ -266,16 +266,16 @@ impl selectors::Element for NodeDataRef<ElementData> {
     #[inline]
     fn is_html_element_in_html_document(&self) -> bool {
         // FIXME: Have a notion of HTML document v.s. XML document?
-        self.name.ns == ns!(html)
+        self.name.borrow().ns == ns!(html)
     }
 
     #[inline]
     fn has_local_name(&self, name: &CssLocalName) -> bool {
-        self.name.local == *name.0
+        self.name.borrow().local == *name.0
     }
     #[inline]
     fn has_namespace(&self, namespace: &Namespace) -> bool {
-        self.name.ns == *namespace
+        self.name.borrow().ns == *namespace
     }
 
     #[inline]
@@ -300,9 +300,10 @@ impl selectors::Element for NodeDataRef<ElementData> {
 
     #[inline]
     fn is_link(&self) -> bool {
-        self.name.ns == ns!(html)
+        let name = self.name.borrow();
+        name.ns == ns!(html)
             && matches!(
-                self.name.local,
+                name.local,
                 local_name!("a") | local_name!("area") | local_name!("link")
             )
             && self
@@ -374,9 +375,10 @@ impl selectors::Element for NodeDataRef<ElementData> {
                 false
             }
             AnyLink | Link => {
-                self.name.ns == ns!(html)
+                let name = self.name.borrow();
+                name.ns == ns!(html)
                     && matches!(
-                        self.name.local,
+                        name.local,
                         local_name!("a") | local_name!("area") | local_name!("link")
                     )
                     && self.attributes.borrow().contains(local_name!("href"))

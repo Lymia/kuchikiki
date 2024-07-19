@@ -51,7 +51,12 @@ pub struct Doctype {
 #[derive(Debug, PartialEq, Clone)]
 pub struct ElementData {
     /// The namespace and local name of the element, such as `ns!(html)` and `body`.
-    pub name: QualName,
+    pub name: RefCell<QualName>,
+
+    /// The original namespace/local name of the element at creation.
+    ///
+    /// This is used only for `TreeSink`, as its API requires a borrow from within `ElementData`.
+    pub original_name: Option<QualName>,
 
     /// The attributes of the elements.
     pub attributes: RefCell<Attributes>,
@@ -218,7 +223,8 @@ impl NodeRef {
             } else {
                 None
             },
-            name,
+            name: RefCell::new(name.clone()),
+            original_name: Some(name),
             attributes: RefCell::new(Attributes {
                 map: attributes.into_iter().collect(),
             }),
